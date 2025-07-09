@@ -1,50 +1,19 @@
-from flask import Flask, request
+from flask import Flask
+from flask_smorest import Api  # or use 'from flask_restful import Api' if you use Flask-RESTful
+from resources.item import blp as ItemBluePrint
+from resources.store import blp as StoreBluePrint
 
 app = Flask(__name__)
 
-stores = [
-  {
-    "name": "My store",
-    "items": [
-      {
-        "name": "Chair",
-        "price": 15.99
-      }
-    ]
-  }
-]
+app.config["PROPAGATE_EXCEPTIONS"] = True
+app.config["API_TITLE"] = "Stores REST API"
+app.config["API_VERSION"] = "v1"
+app.config["OPENAPI_VERSION"] = "3.0.3"
+app.config["OPENAPI_URL_PREFIX"] = "/"
+app.config["OPENAPI_SWAGGER_UI_PATH"] = "/swagger_ui"
+app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
 
-@app.get("/store")
-def get_all_store():
-  return {"stores": stores}
+api = Api(app)
 
-@app.post("/store")
-def create_store():
-  req = request.get_json()
-  new_store = {"name": req["name"], "items": []}
-  stores.append(new_store)
-  return new_store, 201
-
-@app.post("/store/<string:name>/item")
-def create_item(name):
-  req = request.get_json()
-  for store in stores:
-    if store["name"] == name:
-      new_item = {"name": req["name"], "price": req["price"]}
-      store["items"].append(new_item)
-      return new_item, 201
-  return {"message": "store not found"}, 404
-
-@app.get("/store/<string:name>")
-def get_store(name):
-  for store in stores:
-    if store["name"] == name:
-      return store
-  return {"message": "store not found"}, 404
-
-@app.get("/store/<string:name>/item")
-def get_item_in_store(name):
-  for store in stores:
-    if store["name"] == name:
-      return {"items": store["items"]}
-  return {"message": "store not found"}, 404
+api.register_blueprint(ItemBluePrint)
+api.register_blueprint(StoreBluePrint)
