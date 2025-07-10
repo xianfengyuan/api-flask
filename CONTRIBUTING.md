@@ -1,5 +1,11 @@
 # CONTRIBUTING
 
+## How to build docker image
+
+```
+docker-buildx build -t api-flask .
+```
+
 ## How to run docker locally
 
 ```
