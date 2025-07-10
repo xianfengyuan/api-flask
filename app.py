@@ -1,9 +1,12 @@
 import os
-from flask import Flask
+from flask import Flask, jsonify
 from flask_smorest import Api  # or use 'from flask_restful import Api' if you use Flask-RESTful
 from resources.item import blp as ItemBluePrint
 from resources.store import blp as StoreBluePrint
 from resources.tag import blp as TagBluePrint
+from resources.user import blp as UserBluePrint
+
+from flask_jwt_extended import JWTManager
 
 from db import db
 
@@ -22,6 +25,15 @@ def create_app(db_url=None):
   db.init_app(app)
 
   api = Api(app)
+  app.config['JWT_SECRET_KEY'] = "jose"
+  jwt = JWTManager(app)
+
+  @jwt.invalid_token_loader
+  def invalid_token_callback(error):
+    return (
+      jsonify({"message": "signature verification failed", "error": "invalid token"}),
+      401
+    )
 
   @app.before_request
   def create_tables():
@@ -30,5 +42,6 @@ def create_app(db_url=None):
   api.register_blueprint(ItemBluePrint)
   api.register_blueprint(StoreBluePrint)
   api.register_blueprint(TagBluePrint)
+  api.register_blueprint(UserBluePrint)
 
   return app
