@@ -3,9 +3,9 @@ from flask import Flask
 from flask_smorest import Api  # or use 'from flask_restful import Api' if you use Flask-RESTful
 from resources.item import blp as ItemBluePrint
 from resources.store import blp as StoreBluePrint
+from resources.tag import blp as TagBluePrint
 
 from db import db
-import models
 
 def create_app(db_url=None):
   app = Flask(__name__)
@@ -29,5 +29,6 @@ def create_app(db_url=None):
 
   api.register_blueprint(ItemBluePrint)
   api.register_blueprint(StoreBluePrint)
+  api.register_blueprint(TagBluePrint)
 
   return app
