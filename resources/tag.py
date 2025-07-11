@@ -74,6 +74,7 @@ class Tag(MethodView):
     tag = TagModel.query.get_or_404(tag_id)
     return tag
 
+  @jwt_required()
   @blp.response(
     202,
     description="delete tag with no item",
@@ -83,8 +84,6 @@ class Tag(MethodView):
     400,
     description="NOOP if tag is assigned with items."
   )
-
-  @jwt_required()
   def delete(self, tag_id):
     tag = TagModel.query.get_or_404(tag_id)
 
