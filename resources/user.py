@@ -1,5 +1,6 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from flask_jwt_extended import jwt_required
 from passlib.hash import pbkdf2_sha256
 from flask_jwt_extended import create_access_token
 
@@ -39,12 +40,14 @@ class UserLogin(MethodView):
 
 @blp.route("/user/<int:user_id>")
 class User(MethodView):
+  @jwt_required()
   @blp.response(200, UserSchema)
   def get(self, user_id):
     user = UserModel.query.get_or_404(user_id)
 
     return user
 
+  @jwt_required()
   def delete(self, user_id):
     user = UserModel.query.get_or_404(user_id)
     db.session.delete(user)
