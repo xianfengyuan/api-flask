@@ -13,4 +13,4 @@ RUN pip install --upgrade pip && \
 
 COPY . .
 
-CMD ["gunicorn", "--bind", "0.0.0.0", "app:create_app()"]
+CMD ["/bin/bash", "docker-entrypoint.sh"]
